@@ -1,5 +1,5 @@
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Главный класс приложения для оптимизации маршрутов.
@@ -8,10 +8,14 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         try {
+            System.out.println("Запуск системы оптимизации маршрутов...");
+            
             // Парсинг входных данных
             Parser parser = new Parser("input.txt");
             Graph graph = parser.parse();
             List<Request> requests = parser.getRequests();
+            
+            System.out.println("Загружено запросов: " + requests.size());
             
             // Обработка запросов
             ResultWriter writer = new ResultWriter("output.txt");
@@ -55,23 +59,37 @@ public class Main {
             }
             
             writer.close();
-            System.out.println("Результаты сохранены в output.txt");
+            System.out.println("Результаты успешно сохранены в output.txt");
             
         } catch (IOException e) {
             System.err.println("Ошибка при обработке файлов: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Ошибка: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     /**
      * Выбор компромиссного маршрута на основе приоритетов
      */
-    private static Route selectCompromiseRoute(Route route1, Route route2, Route route3, List<Criteria> priorities) {
-        List<Route> routes = List.of(route1, route2, route3);
+    private static Route selectCompromiseRoute(Route route1, Route route2, Route route3, 
+                                               List<Criteria> priorities) {
+        List<Route> routes = Arrays.asList(route1, route2, route3);
+        
+        // Удаляем пустые маршруты
+        List<Route> validRoutes = new ArrayList<>();
+        for (Route route : routes) {
+            if (route != null && !route.isEmpty()) {
+                validRoutes.add(route);
+            }
+        }
+        
+        if (validRoutes.isEmpty()) {
+            return new Route(new ArrayList<>());
+        }
         
         // Сортируем маршруты по приоритетам
-        routes.sort((r1, r2) -> {
+        validRoutes.sort((r1, r2) -> {
             for (Criteria priority : priorities) {
                 int compare = compareByCriteria(r1, r2, priority);
                 if (compare != 0) {
@@ -81,7 +99,7 @@ public class Main {
             return 0;
         });
         
-        return routes.get(0);
+        return validRoutes.get(0);
     }
     
     /**

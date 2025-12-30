@@ -1,3 +1,6 @@
+/**
+ * Класс, представляющий город
+ */
 public class City {
     private final int id;
     private final String name;
@@ -7,6 +10,16 @@ public class City {
         this.name = name;
     }
     
-    public int getId() { return id; }
-    public String getName() { return name; }
+    public int getId() { 
+        return id; 
+    }
+    
+    public String getName() { 
+        return name; 
+    }
+    
+    @Override
+    public String toString() {
+        return "City{id=" + id + ", name='" + name + "'}";
+    }
 }

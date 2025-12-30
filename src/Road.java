@@ -1,3 +1,6 @@
+/**
+ * Класс, представляющий дорогу между двумя городами
+ */
 public class Road {
     private final String fromCity;
     private final String toCity;
@@ -13,14 +16,45 @@ public class Road {
         this.cost = cost;
     }
     
-    // Геттеры и другие методы
+    // Геттеры
+    public String getFromCity() { 
+        return fromCity; 
+    }
+    
+    public String getToCity() { 
+        return toCity; 
+    }
+    
+    public int getLength() { 
+        return length; 
+    }
+    
+    public int getTime() { 
+        return time; 
+    }
+    
+    public int getCost() { 
+        return cost; 
+    }
+    
+    /**
+     * Получить город на противоположном конце дороги
+     */
     public String getOtherCity(String city) {
         if (fromCity.equals(city)) return toCity;
         if (toCity.equals(city)) return fromCity;
         return null;
     }
     
+    /**
+     * Создать обратную дорогу (для двустороннего движения)
+     */
     public Road getReverse() {
         return new Road(toCity, fromCity, length, time, cost);
+    }
+    
+    @Override
+    public String toString() {
+        return fromCity + " - " + toCity + ": " + length + "km, " + time + "min, " + cost + "rub";
     }
 }

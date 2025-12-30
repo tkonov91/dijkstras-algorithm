@@ -1,8 +1,8 @@
 import java.util.*;
 
 /**
- * Класс, представляющий граф городов и дорог.
- * Реализует алгоритм Дейкстры для поиска кратчайших путей.
+ * Класс, представляющий граф городов и дорог
+ * Реализует алгоритм Дейкстры для поиска кратчайших путей
  */
 public class Graph {
     private final Map<String, City> cities = new HashMap<>();
@@ -31,7 +31,7 @@ public class Graph {
      */
     public Route findShortestRoute(String from, String to, Criteria criteria) {
         if (!cities.containsKey(from) || !cities.containsKey(to)) {
-            throw new IllegalArgumentException("Город не найден");
+            throw new IllegalArgumentException("Город не найден: " + from + " или " + to);
         }
         
         // Инициализация структур данных для алгоритма Дейкстры
@@ -51,14 +51,14 @@ public class Graph {
         while (!queue.isEmpty()) {
             CityNode current = queue.poll();
             
+            // Если нашли более короткий путь до этой вершины - пропускаем
+            if (current.distance > distances.get(current.cityName)) {
+                continue;
+            }
+            
             // Если достигли целевого города
             if (current.cityName.equals(to)) {
                 break;
-            }
-            
-            // Пропускаем, если нашли более короткий путь до этой вершины
-            if (current.distance > distances.get(current.cityName)) {
-                continue;
             }
             
             // Обход соседей
@@ -81,7 +81,7 @@ public class Graph {
         
         // Если путь не найден
         if (path.isEmpty() || !path.get(path.size() - 1).equals(to)) {
-            return new Route(Collections.emptyList());
+            return new Route(new ArrayList<>());
         }
         
         // Создание маршрута с вычислением всех параметров
@@ -106,14 +106,22 @@ public class Graph {
         LinkedList<String> path = new LinkedList<>();
         String current = to;
         
+        // Восстанавливаем путь от конца к началу
         while (current != null) {
             path.addFirst(current);
-            current = predecessors.get(current);
+            String prev = predecessors.get(current);
             
             // Проверка на наличие цикла
-            if (path.contains(current)) {
+            if (prev != null && path.contains(prev)) {
                 break;
             }
+            
+            current = prev;
+        }
+        
+        // Проверяем, что путь начинается с исходного города
+        if (!path.isEmpty() && !path.getFirst().equals(from)) {
+            return new ArrayList<>();
         }
         
         return path;
